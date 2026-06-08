@@ -6,9 +6,11 @@ Una experiencia web visual donde cientos de partículas cobran vida alrededor de
 
 ![Nebula](https://img.shields.io/badge/Nebula-v1.0-00f0ff?style=for-the-badge)
 
-## 🚀 Demo
+## 🚀 Demo en vivo
 
-Abre [`particulas.html`](particulas.html) en cualquier navegador moderno. No requiere instalación ni dependencias.
+**[✨ Ver Nebula en acción](https://dilsonzm.github.io/Nebula/)**
+
+O abre [`index.html`](index.html) localmente en cualquier navegador moderno. No requiere instalación ni dependencias.
 
 ## 🎮 Cómo usar
 
