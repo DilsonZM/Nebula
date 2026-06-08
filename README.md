@@ -37,10 +37,40 @@ Panel glass-morphism en la esquina superior derecha con sliders personalizados:
 - 🧲 **Sistema de correa magnética** — las partículas siguen al mouse pero tienen distancia máxima desde su base, creando un efecto natural de "tensar y soltar"
 - 🌌 **Enlaces neón galaxia** — líneas con doble capa (halo exterior + núcleo brillante) y gradientes turquesa → púrpura → magenta → cian
 - ⚡ **Pulso magnético visual** — anillo que se expande mostrando el radio del campo magnético al hacer clic
-- 🎨 **180 partículas** con movimiento sutil tipo "breathing" cuando están estáticas
-- 📱 **Soporte touch** para dispositivos móviles
-- 🔍 **Zoom dinámico** con scroll del mouse o slider
+- 🎨 **Partículas adaptativas** — el sistema detecta tu dispositivo y ajusta la cantidad óptima de partículas
+- 📱 **Soporte móvil completo** — touch, pinch-to-zoom, panel bottom-sheet, touch targets grandes
+- 🖥️ **Detección de dispositivo** — badge temporal muestra si detectó Desktop, Tablet, Mobile o Touch Laptop
+- 🔍 **Zoom dinámico** — con scroll del mouse, slider o pinch con dos dedos
 - 🎛️ **UI sci-fi** con bordes neón, glass-morphism y tipografía monospace
+
+## 📱 Soporte móvil
+
+Nebula detecta automáticamente el dispositivo al cargar:
+
+| Dispositivo | Detección | Partículas por defecto |
+|-------------|-----------|----------------------|
+| 🖥 **Desktop** | Sin touch | 180 |
+| 💻 **Touch Laptop** | Touch + pantalla grande | 160 |
+| 📱 **Tablet** | Touch + pantalla mediana | 140 |
+| 📱 **Mobile** | Touch + pantalla chica | 90 |
+
+**Controles táctiles:**
+- **1 dedo:** seguir + enlazar (como mouse)
+- **2 dedos (pinch):** zoom in/out
+- **Panel:** se abre como bottom-sheet en móvil, panel flotante en desktop
+- **Safe areas:** respeta el notch del iPhone
+
+## 📂 Estructura del proyecto
+
+```
+nebula/
+├── index.html          # Estructura HTML + meta tags
+├── css/
+│   └── style.css       # Estilos + media queries (desktop/tablet/mobile)
+├── js/
+│   └── nebula.js       # Lógica completa + detección de dispositivo
+└── README.md
+```
 
 ## 🛠️ Tecnología
 

@@ -2,215 +2,16 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Nebula · Interactive magnetic particles with galaxy neon links">
 <title>Nebula ✨</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><radialGradient id='g' cx='50%25' cy='50%25' r='50%25'><stop offset='0%25' stop-color='%237ff7ff'/><stop offset='45%25' stop-color='%23b400ff'/><stop offset='100%25' stop-color='%230a0a1a'/></radialGradient></defs><circle cx='50' cy='50' r='48' fill='url(%23g)'/><circle cx='50' cy='50' r='8' fill='%23fff' opacity='0.9'/><circle cx='35' cy='40' r='2.5' fill='%237ff7ff' opacity='0.8'/><circle cx='68' cy='55' r='2' fill='%23ff66cc' opacity='0.8'/><circle cx='55' cy='30' r='1.5' fill='%23fff' opacity='0.7'/><circle cx='40' cy='68' r='2' fill='%23b400ff' opacity='0.7'/></svg>">
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0a1a; }
-  canvas { display: block; cursor: crosshair; }
-
-  /* ---------- Panel de control neón ---------- */
-  #panel {
-    position: fixed;
-    top: 16px; right: 16px;
-    width: 280px;
-    padding: 18px 20px 14px;
-    background: rgba(8, 12, 22, 0.75);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 240, 255, 0.35);
-    border-radius: 8px;
-    box-shadow:
-      0 0 12px rgba(0, 240, 255, 0.25),
-      0 0 30px rgba(180, 0, 255, 0.15),
-      inset 0 0 12px rgba(0, 240, 255, 0.05);
-    font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
-    color: #b8e8ff;
-    z-index: 10;
-    transition: opacity 0.3s, transform 0.3s;
-  }
-  #panel.hidden {
-    opacity: 0;
-    transform: translateX(320px);
-    pointer-events: none;
-  }
-  #panel h2 {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #7ff7ff;
-    text-shadow: 0 0 8px #00e0ff, 0 0 16px #00a0ff;
-    margin-bottom: 14px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-  }
-  .ctrl {
-    margin-bottom: 14px;
-  }
-  .ctrl-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 6px;
-  }
-  .ctrl-label {
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #89b8d8;
-  }
-  .ctrl-value {
-    font-size: 11px;
-    color: #7ff7ff;
-    text-shadow: 0 0 6px #00c8ff;
-    min-width: 40px;
-    text-align: right;
-  }
-
-  /* Slider neón */
-  input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, #00f0ff33, #b400ff33);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #0a0a1a;
-    border: 2px solid #00f0ff;
-    box-shadow:
-      0 0 6px #00f0ff,
-      0 0 14px rgba(0, 240, 255, 0.6),
-      inset 0 0 4px rgba(0, 240, 255, 0.4);
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-  input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.25);
-    box-shadow:
-      0 0 10px #00f0ff,
-      0 0 22px rgba(0, 240, 255, 0.8),
-      inset 0 0 6px rgba(0, 240, 255, 0.6);
-  }
-  input[type="range"]::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #0a0a1a;
-    border: 2px solid #00f0ff;
-    box-shadow: 0 0 6px #00f0ff, 0 0 14px rgba(0, 240, 255, 0.6);
-    cursor: pointer;
-  }
-  input[type="range"]::-moz-range-track {
-    height: 4px;
-    background: linear-gradient(90deg, #00f0ff33, #b400ff33);
-    border-radius: 2px;
-  }
-
-  /* Botón reset zoom */
-  #resetZoom {
-    width: 100%;
-    padding: 7px 0;
-    margin-top: 4px;
-    background: transparent;
-    color: #7ff7ff;
-    border: 1px solid rgba(0, 240, 255, 0.4);
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  #resetZoom:hover {
-    background: rgba(0, 240, 255, 0.1);
-    border-color: #00f0ff;
-    box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
-    text-shadow: 0 0 8px #00f0ff;
-  }
-
-  /* Toggle panel */
-  #toggleBtn {
-    position: fixed;
-    top: 16px; right: 16px;
-    width: 40px; height: 40px;
-    background: rgba(8, 12, 22, 0.75);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 240, 255, 0.35);
-    border-radius: 50%;
-    color: #7ff7ff;
-    font-size: 18px;
-    cursor: pointer;
-    z-index: 11;
-    box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #toggleBtn:hover {
-    box-shadow: 0 0 18px rgba(0, 240, 255, 0.6);
-    color: #fff;
-  }
-  #toggleBtn.hide {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  /* Logo */
-  .logo {
-    position: fixed;
-    top: 16px; left: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    z-index: 10;
-    pointer-events: none;
-  }
-  .logo-star {
-    font-size: 22px;
-    color: #7ff7ff;
-    text-shadow:
-      0 0 8px #00f0ff,
-      0 0 18px rgba(0, 240, 255, 0.8),
-      0 0 32px rgba(180, 0, 255, 0.5);
-    animation: starPulse 2.8s ease-in-out infinite;
-  }
-  @keyframes starPulse {
-    0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
-    50% { transform: scale(1.15) rotate(180deg); opacity: 0.85; }
-  }
-  .logo-text {
-    font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
-    font-size: 18px;
-    font-weight: 300;
-    letter-spacing: 8px;
-    color: #e8f9ff;
-    text-shadow:
-      0 0 6px rgba(127, 247, 255, 0.9),
-      0 0 14px rgba(0, 240, 255, 0.6),
-      0 0 28px rgba(180, 0, 255, 0.4);
-  }
-
-  /* Info bottom */
-  .info {
-    position: fixed; bottom: 12px; left: 14px;
-    color: #5a8fb0; font-family: 'SF Mono', monospace;
-    font-size: 11px; letter-spacing: 0.5px;
-    pointer-events: none; opacity: .7;
-  }
-</style>
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a0a1a'/><defs><radialGradient id='g' cx='50%25' cy='50%25' r='50%25'><stop offset='0%25' stop-color='%237ff7ff'/><stop offset='45%25' stop-color='%23b400ff'/><stop offset='100%25' stop-color='%230a0a1a'/></radialGradient></defs><circle cx='50' cy='50' r='45' fill='url(%23g)'/><circle cx='50' cy='50' r='7' fill='%23fff' opacity='0.9'/></svg>">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -219,7 +20,10 @@
   <span class="logo-text">NEBULA</span>
 </div>
 
-<button id="toggleBtn" title="Abrir controles">⚙</button>
+<!-- Indicador del dispositivo detectado -->
+<div class="device-badge" id="deviceBadge"></div>
+
+<button id="toggleBtn" title="Abrir controles" aria-label="Abrir panel de control">⚙</button>
 
 <div id="panel">
   <h2>◈ Controles</h2>
@@ -229,7 +33,7 @@
       <span class="ctrl-label">Partículas</span>
       <span class="ctrl-value" id="vCount">180</span>
     </div>
-    <input type="range" id="sCount" min="20" max="500" value="180" step="5">
+    <input type="range" id="sCount" min="20" max="500" value="180" step="5" aria-label="Cantidad de partículas">
   </div>
 
   <div class="ctrl">
@@ -237,7 +41,7 @@
       <span class="ctrl-label">Fuerza del imán</span>
       <span class="ctrl-value" id="vMagnet">1.0×</span>
     </div>
-    <input type="range" id="sMagnet" min="0.2" max="3" value="1" step="0.1">
+    <input type="range" id="sMagnet" min="0.2" max="3" value="1" step="0.1" aria-label="Fuerza del imán">
   </div>
 
   <div class="ctrl">
@@ -245,7 +49,7 @@
       <span class="ctrl-label">Radio de captura</span>
       <span class="ctrl-value" id="vRadius">90px</span>
     </div>
-    <input type="range" id="sRadius" min="30" max="250" value="90" step="5">
+    <input type="range" id="sRadius" min="30" max="250" value="90" step="5" aria-label="Radio de captura">
   </div>
 
   <div class="ctrl">
@@ -253,7 +57,7 @@
       <span class="ctrl-label">Máx. siguiendo</span>
       <span class="ctrl-value" id="vMax">12</span>
     </div>
-    <input type="range" id="sMax" min="1" max="40" value="12" step="1">
+    <input type="range" id="sMax" min="1" max="40" value="12" step="1" aria-label="Máximo siguiendo al mouse">
   </div>
 
   <div class="ctrl">
@@ -261,431 +65,16 @@
       <span class="ctrl-label">Zoom</span>
       <span class="ctrl-value" id="vZoom">1.0×</span>
     </div>
-    <input type="range" id="sZoom" min="1" max="4" value="1" step="0.05">
+    <input type="range" id="sZoom" min="1" max="4" value="1" step="0.05" aria-label="Zoom">
   </div>
 
   <button id="resetZoom">↺ Reset Zoom</button>
 </div>
 
-<div class="info">Mueve el mouse · Clic para enlazar · Scroll para zoom</div>
+<div class="info" id="infoText"></div>
 
 <canvas id="c"></canvas>
 
-<script>
-(() => {
-  const canvas = document.getElementById('c');
-  const ctx = canvas.getContext('2d');
-  let W, H;
-
-  /* ---------- Settings ---------- */
-  const settings = {
-    count: 180,
-    magnetStrength: 1.0,
-    captureRadius: 90,
-    maxFollowing: 12,
-    zoom: 1.0,
-    MAX_LEASH: 140
-  };
-
-  /* ---------- Mouse (screen coords) ---------- */
-  const mouseScreen = { x: -9999, y: -9999 };
-  const mouse = { x: -9999, y: -9999, clicked: false, clickX: 0, clickY: 0 };
-
-  // Convert screen → world (undo zoom transform around center)
-  const screenToWorld = (sx, sy) => ({
-    x: (sx - W / 2) / settings.zoom + W / 2,
-    y: (sy - H / 2) / settings.zoom + H / 2
-  });
-
-  const updateMouseWorld = () => {
-    const w = screenToWorld(mouseScreen.x, mouseScreen.y);
-    mouse.x = w.x;
-    mouse.y = w.y;
-  };
-
-  window.addEventListener('mousemove', e => {
-    mouseScreen.x = e.clientX;
-    mouseScreen.y = e.clientY;
-    updateMouseWorld();
-  });
-  window.addEventListener('mousedown', e => {
-    // Ignorar clics sobre el panel
-    if (e.target.closest('#panel') || e.target.closest('#toggleBtn')) return;
-    mouse.clicked = true;
-    const w = screenToWorld(e.clientX, e.clientY);
-    mouse.clickX = w.x;
-    mouse.clickY = w.y;
-  });
-  window.addEventListener('touchmove', e => {
-    const t = e.touches[0];
-    mouseScreen.x = t.clientX;
-    mouseScreen.y = t.clientY;
-    updateMouseWorld();
-  }, { passive: true });
-  window.addEventListener('touchstart', e => {
-    if (e.target.closest('#panel') || e.target.closest('#toggleBtn')) return;
-    const t = e.touches[0];
-    mouseScreen.x = t.clientX;
-    mouseScreen.y = t.clientY;
-    updateMouseWorld();
-    mouse.clicked = true;
-    mouse.clickX = mouse.x;
-    mouse.clickY = mouse.y;
-  });
-
-  /* ---------- Zoom con rueda del mouse ---------- */
-  window.addEventListener('wheel', e => {
-    if (e.target.closest('#panel')) return;
-    e.preventDefault();
-    const delta = -e.deltaY * 0.0015;
-    settings.zoom = Math.max(1, Math.min(4, settings.zoom + delta));
-    updateMouseWorld();
-    syncZoomSlider();
-  }, { passive: false });
-
-  /* ---------- Particles ---------- */
-  const particles = [];
-  let clickLinks = [];
-  let clickAlpha = 0;
-
-  /* ---------- Pulso magnético del clic ---------- */
-  // Cuando haces clic, se crea un pulso que atrae partículas hacia el punto.
-  // La fuerza del imán controla el radio y la intensidad del pulso:
-  //   poca fuerza → radio chico, pocas partículas llegan
-  //   mucha fuerza → radio grande, muchas partículas son jaladas
-  let clickPulse = null; // { x, y, life, maxLife, radius, force, candidates }
-
-  const startClickPulse = (px, py) => {
-    const mag = settings.magnetStrength;
-    const radius = settings.captureRadius * (0.3 + mag * 1.4);  // ~39px con 0.2×, ~215px con 3×
-    const force  = 0.04 + mag * 0.14;                          // suave a fuerte
-    const life   = Math.round(22 + mag * 10);                  // frames que dura el pulso
-    clickPulse = { x: px, y: py, life, maxLife: life, radius, force, candidates: [] };
-  };
-
-  const updateClickPulse = () => {
-    if (!clickPulse) return;
-    const cp = clickPulse;
-    cp.life--;
-
-    // Atraer partículas dentro del radio del pulso hacia el punto del clic
-    for (const p of particles) {
-      const dx = cp.x - p.x;
-      const dy = cp.y - p.y;
-      const d = Math.hypot(dx, dy) + 0.01;
-      if (d < cp.radius) {
-        // Fuerza decae con la distancia, escala con el fade del pulso
-        const t = 1 - d / cp.radius;
-        const fade = cp.life / cp.maxLife;
-        const pull = cp.force * t * fade;
-        p.x += (dx / d) * pull * 12;
-        p.y += (dy / d) * pull * 12;
-      }
-    }
-
-    // Al terminar el pulso, capturar las 6 más cercanas al punto
-    if (cp.life <= 0) {
-      clickLinks = findNearest(cp.x, cp.y, 6);
-      clickAlpha = 1;
-      clickPulse = null;
-    }
-  };
-
-  class Particle {
-    constructor() {
-      this.baseX = Math.random() * W;
-      this.baseY = Math.random() * H;
-      this.x = this.baseX;
-      this.y = this.baseY;
-      this.baseR = 1.5 + Math.random() * 2;  // tamaño base (mínimo)
-      this.r = this.baseR;
-      this.hue = 190 + Math.random() * 80;
-      this.following = false;
-      this.phaseX = Math.random() * Math.PI * 2;
-      this.phaseY = Math.random() * Math.PI * 2;
-      this.speedX = 0.003 + Math.random() * 0.004;
-      this.speedY = 0.003 + Math.random() * 0.004;
-      this.amplitudeX = 2 + Math.random() * 4;
-      this.amplitudeY = 2 + Math.random() * 4;
-    }
-    update(t) {
-      const driftX = Math.sin(t * this.speedX + this.phaseX) * this.amplitudeX;
-      const driftY = Math.cos(t * this.speedY + this.phaseY) * this.amplitudeY;
-
-      let targetX = this.baseX + driftX;
-      let targetY = this.baseY + driftY;
-
-      if (this.following) {
-        targetX = mouse.x + driftX * 0.3;
-        targetY = mouse.y + driftY * 0.3;
-
-        const distToBase = Math.hypot(this.x - this.baseX, this.y - this.baseY);
-        if (distToBase > settings.MAX_LEASH) {
-          this.following = false;
-        }
-
-        const pull = 0.18 * settings.magnetStrength;
-        this.x += (targetX - this.x) * pull;
-        this.y += (targetY - this.y) * pull;
-      } else {
-        const distToMouse = Math.hypot(mouse.x - this.x, mouse.y - this.y);
-        if (distToMouse < settings.captureRadius) {
-          const followingCount = particles.filter(p => p.following).length;
-          if (followingCount < settings.maxFollowing) {
-            this.following = true;
-          }
-        }
-
-        this.x += (targetX - this.x) * 0.08;
-        this.y += (targetY - this.y) * 0.08;
-      }
-    }
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-      if (this.following) {
-        ctx.fillStyle = 'hsl(185, 90%, 85%)';
-        ctx.shadowColor = 'hsl(185, 100%, 75%)';
-        ctx.shadowBlur = 8;
-      } else {
-        ctx.fillStyle = `hsl(${this.hue}, 85%, 65%)`;
-        ctx.shadowColor = `hsl(${this.hue}, 100%, 70%)`;
-        ctx.shadowBlur = 6;
-      }
-      ctx.fill();
-    }
-  }
-
-  const initParticles = (n) => {
-    particles.length = 0;
-    for (let i = 0; i < n; i++) particles.push(new Particle());
-  };
-
-  const adjustParticleCount = (target) => {
-    while (particles.length < target) particles.push(new Particle());
-    while (particles.length > target) particles.pop();
-  };
-
-  const resize = () => {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-    particles.forEach(p => {
-      p.baseX = Math.random() * W;
-      p.baseY = Math.random() * H;
-      p.x = p.baseX;
-      p.y = p.baseY;
-    });
-  };
-
-  resize();
-  initParticles(settings.count);
-  window.addEventListener('resize', resize);
-  ctx.shadowBlur = 0;
-
-  /* ---------- Find nearest ---------- */
-  const findNearest = (px, py, count) => {
-    const withDist = particles.map(p => ({
-      p,
-      d: Math.hypot(p.x - px, p.y - py)
-    }));
-    withDist.sort((a, b) => a.d - b.d);
-    return withDist.slice(0, count);
-  };
-
-  /* ---------- Galaxy click links ---------- */
-  // Dibujar anillo del pulso mientras está activo
-  const drawClickPulse = () => {
-    if (!clickPulse) return;
-    const cp = clickPulse;
-    const fade = cp.life / cp.maxLife;
-    const expand = 1 + (1 - fade) * 0.3;
-
-    // Anillo exterior (el campo magnético)
-    ctx.strokeStyle = `hsla(185, 100%, 70%, ${fade * 0.35})`;
-    ctx.lineWidth = 1;
-    ctx.shadowColor = 'hsl(185, 100%, 75%)';
-    ctx.shadowBlur = 8;
-    ctx.beginPath();
-    ctx.arc(cp.x, cp.y, cp.radius * expand, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Punto central
-    ctx.fillStyle = `hsla(180, 100%, 90%, ${fade * 0.7})`;
-    ctx.shadowBlur = 12;
-    ctx.beginPath();
-    ctx.arc(cp.x, cp.y, 2.5 * fade, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-  };
-
-  const drawClickLinks = (t) => {
-    if (clickLinks.length === 0 || clickAlpha <= 0) return;
-    ctx.shadowBlur = 0;
-    const pts = clickLinks;
-
-    const pulse = 0.85 + Math.sin(t * 0.008) * 0.15;
-    const baseAlpha = clickAlpha * pulse;
-
-    const galaxyColors = [
-      { h: 180, s: 100, l: 60 },
-      { h: 270, s: 95,  l: 70 },
-      { h: 320, s: 100, l: 65 },
-      { h: 200, s: 100, l: 65 },
-    ];
-
-    for (let i = 0; i < pts.length; i++) {
-      for (let j = i + 1; j < pts.length; j++) {
-        const a = pts[i].p, b = pts[j].p;
-        const c1 = galaxyColors[(i + j) % galaxyColors.length];
-        const c2 = galaxyColors[(i + j + 1) % galaxyColors.length];
-
-        const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-        grad.addColorStop(0, `hsla(${c1.h}, ${c1.s}%, ${c1.l}%, ${baseAlpha * 0.7})`);
-        grad.addColorStop(1, `hsla(${c2.h}, ${c2.s}%, ${c2.l}%, ${baseAlpha * 0.7})`);
-
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 1.2;
-        ctx.shadowColor = `hsl(${c1.h}, 100%, 70%)`;
-        ctx.shadowBlur = 10;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-
-        const gradInner = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-        gradInner.addColorStop(0, `hsla(${c1.h}, 100%, 90%, ${baseAlpha * 0.95})`);
-        gradInner.addColorStop(1, `hsla(${c2.h}, 100%, 90%, ${baseAlpha * 0.95})`);
-        ctx.strokeStyle = gradInner;
-        ctx.lineWidth = 0.4;
-        ctx.shadowBlur = 3;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-      }
-    }
-
-    ctx.shadowBlur = 0;
-
-    const nodeGrad = ctx.createRadialGradient(
-      mouse.clickX, mouse.clickY, 0,
-      mouse.clickX, mouse.clickY, 4 * clickAlpha
-    );
-    nodeGrad.addColorStop(0, `hsla(180, 100%, 95%, ${clickAlpha * 0.9})`);
-    nodeGrad.addColorStop(0.5, `hsla(270, 100%, 75%, ${clickAlpha * 0.5})`);
-    nodeGrad.addColorStop(1, `hsla(320, 100%, 65%, 0)`);
-    ctx.fillStyle = nodeGrad;
-    ctx.shadowColor = 'hsl(270, 100%, 75%)';
-    ctx.shadowBlur = 12;
-    ctx.beginPath();
-    ctx.arc(mouse.clickX, mouse.clickY, 4 * clickAlpha, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-
-    clickAlpha -= 0.006;
-    if (clickAlpha < 0) clickAlpha = 0;
-  };
-
-  const handleClick = () => {
-    if (mouse.clicked) {
-      mouse.clicked = false;
-      startClickPulse(mouse.clickX, mouse.clickY);
-    }
-  };
-
-  /* ---------- Main loop ---------- */
-  const loop = (t) => {
-    // Limpiar con fondo sólido
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = '#0a0a1a';
-    ctx.fillRect(0, 0, W, H);
-
-    // Aplicar zoom centrado en la pantalla
-    const z = settings.zoom;
-    ctx.translate(W / 2, H / 2);
-    ctx.scale(z, z);
-    ctx.translate(-W / 2, -H / 2);
-
-    handleClick();
-    updateClickPulse();
-    drawClickPulse();
-    drawClickLinks(t);
-
-    for (const p of particles) { p.update(t); p.draw(); }
-
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-    requestAnimationFrame(loop);
-  };
-  requestAnimationFrame(loop);
-
-  /* ---------- Controles ---------- */
-  const panel = document.getElementById('panel');
-  const toggleBtn = document.getElementById('toggleBtn');
-  let panelOpen = true;
-
-  const syncZoomSlider = () => {
-    document.getElementById('sZoom').value = settings.zoom;
-    document.getElementById('vZoom').textContent = settings.zoom.toFixed(2) + '×';
-  };
-
-  toggleBtn.addEventListener('click', () => {
-    panelOpen = !panelOpen;
-    panel.classList.toggle('hidden', !panelOpen);
-    toggleBtn.classList.toggle('hide', panelOpen);
-  });
-  // Empezar con el panel visible → ocultar toggle
-  toggleBtn.classList.add('hide');
-
-  // Clic en el borde del panel para cerrarlo (opcional): botón X
-  // Agregamos un listener al panel: doble clic fuera para cerrar
-  // Más simple: clic en el título para minimizar
-  panel.querySelector('h2').style.cursor = 'pointer';
-  panel.querySelector('h2').addEventListener('click', () => {
-    panelOpen = false;
-    panel.classList.add('hidden');
-    toggleBtn.classList.remove('hide');
-  });
-
-  // Partículas
-  document.getElementById('sCount').addEventListener('input', e => {
-    settings.count = parseInt(e.target.value);
-    document.getElementById('vCount').textContent = settings.count;
-    adjustParticleCount(settings.count);
-  });
-
-  // Fuerza del imán
-  document.getElementById('sMagnet').addEventListener('input', e => {
-    settings.magnetStrength = parseFloat(e.target.value);
-    document.getElementById('vMagnet').textContent = settings.magnetStrength.toFixed(1) + '×';
-  });
-
-  // Radio de captura
-  document.getElementById('sRadius').addEventListener('input', e => {
-    settings.captureRadius = parseInt(e.target.value);
-    document.getElementById('vRadius').textContent = settings.captureRadius + 'px';
-  });
-
-  // Máx siguiendo
-  document.getElementById('sMax').addEventListener('input', e => {
-    settings.maxFollowing = parseInt(e.target.value);
-    document.getElementById('vMax').textContent = settings.maxFollowing;
-  });
-
-  // Zoom slider
-  document.getElementById('sZoom').addEventListener('input', e => {
-    settings.zoom = parseFloat(e.target.value);
-    document.getElementById('vZoom').textContent = settings.zoom.toFixed(2) + '×';
-    updateMouseWorld();
-  });
-
-  // Reset zoom
-  document.getElementById('resetZoom').addEventListener('click', () => {
-    settings.zoom = 1.0;
-    syncZoomSlider();
-    updateMouseWorld();
-  });
-})();
-</script>
+<script src="js/nebula.js"></script>
 </body>
 </html>
